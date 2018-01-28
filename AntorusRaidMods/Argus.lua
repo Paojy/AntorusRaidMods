@@ -277,17 +277,19 @@ spell_cd:SetScript("OnUpdate", function(self, e)
 		end
 		
 		-- 萨格拉斯的判决
+		if self.sent_exp then
 		self.sent_remain = self.sent_exp - time()
-		if self.sent_remain == 0 then
-			self.sent_count = self.sent_count + 1
-			if self.sent_p3[self.sent_count] then
-				self.sent_exp = time() + self.sent_p3[self.sent_count]
-			end
-		elseif self.sent_remain > 0 and self.sent_remain < 6 then
-			local sent_remaining = math.floor(self.sent_remain)	
-			if not self.sent_previous or self.sent_previous ~= sent_remaining then
-				SendAddonMessage("arm_sent", self.sent_count.."_"..sent_remaining, "RAID")
-				self.sent_previous = sent_remaining
+			if self.sent_remain == 0 then
+				self.sent_count = self.sent_count + 1
+				if self.sent_p3[self.sent_count] then
+					self.sent_exp = time() + self.sent_p3[self.sent_count]
+				end
+			elseif self.sent_remain > 0 and self.sent_remain < 6 then
+				local sent_remaining = math.floor(self.sent_remain)	
+				if not self.sent_previous or self.sent_previous ~= sent_remaining then
+					SendAddonMessage("arm_sent", self.sent_count.."_"..sent_remaining, "RAID")
+					self.sent_previous = sent_remaining
+				end
 			end
 		end
 		self.t = 0

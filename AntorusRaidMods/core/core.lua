@@ -1689,9 +1689,9 @@ T.Play = function(frame, v)
 	local enable = ARM_CDB["Sounds"][v] and not (ARM_CDB["General"]["disable_all"] or ARM_CDB["General"]["disable_sound"])
 	if enable and not frame.play then
 		if G.shared[v] then
-			PlaySoundFile(G.media.sounds..G.shared[v]..".ogg", "Master")
+			PlaySoundFile(G.media.sounds..G.shared[v]..".ogg", "Dialog")
 		else
-			PlaySoundFile(G.media.sounds..v..".ogg", "Master")
+			PlaySoundFile(G.media.sounds..v..".ogg", "Dialog")
 		end
 		frame.play = true
 		C_Timer.After(2, function() frame.play = false end)
@@ -2051,7 +2051,7 @@ end
 --
 --local PlayRT = function(i)
 --	if ARM_CDB["GroupSharingFrame"]["sound"] and not ARM_CDB["General"]["disable_sound"] then
---		PlaySoundFile(G.media.sounds.."rt"..i..".ogg", "Master")
+--		PlaySoundFile(G.media.sounds.."rt"..i..".ogg", "Dialog")
 --	end
 --end
 --								

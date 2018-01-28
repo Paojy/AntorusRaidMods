@@ -372,9 +372,9 @@ T.CreateSoundOptions = function(parent, v, x, y, tip)
 		end
 		GameTooltip:Show() 
 		if G.shared[v] then
-			PlaySoundFile(G.media.sounds..G.shared[v]..".ogg", "Master")
+			PlaySoundFile(G.media.sounds..G.shared[v]..".ogg", "Dialog")
 		else
-			PlaySoundFile(G.media.sounds..v..".ogg", "Master")
+			PlaySoundFile(G.media.sounds..v..".ogg", "Dialog")
 		end
 	end)
 	

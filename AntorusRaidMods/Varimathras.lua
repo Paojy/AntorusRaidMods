@@ -98,8 +98,10 @@ local function Update(event, ...)
 				if DestName == G.PlayerName then
 					C_Timer.After(.2, function()
 						local myicon = GetRaidTargetIndex("player")
+						if myicon then
 						T.SendChatMsg("{rt"..myicon.."}{rt"..myicon.."}{rt"..myicon.."}","YELL", 3)
 						SetRaidTargetIconTexture(Frame.icon, myicon)
+						end
 					end)
 					C_Timer.After(10, function() SetRaidTargetIconTexture(Frame.icon, 0) end)
 				end		

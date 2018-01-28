@@ -651,10 +651,4 @@ eventframe:SetScript("OnEvent", function(self, event, ...)
 	
 	T.LoadVariables()
 	T.LoadAccountVariables()
-	ARM_DB["spells"] = {}
-	for k, v in pairs(Character_default_Settings["Sounds"]) do
-		local _, spellID = string.split("_", k)
-		local spellName = GetSpellInfo(spellID)
-		ARM_DB["spells"][k] = spellName
-	end
 end)
