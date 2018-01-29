@@ -107,12 +107,26 @@ AlertFrame.LineUpIcons = function()
 	local space = ARM_CDB["AlertFrame"]["icon_space"]
 	for v, frame in T.pairsByKeys(AlertFrame.ActiveIcons) do
 		frame:ClearAllPoints()
+		frame.text:ClearAllPoints()
+		
+		if grow_dir == "TOP" or grow_dir == "BOTTOM" then
+			frame.text:SetPoint("LEFT", frame, "RIGHT", 10, 0)
+			frame.text:SetJustifyH("LEFT")
+		else
+			frame.text:SetPoint("TOP", frame, "BOTTOM", 0, -5)
+			frame.text:SetJustifyH("CENTER")
+		end
+		
 		if not lastframe then
 			frame:SetPoint(grow_dir, AlertFrame, grow_dir)
 		elseif grow_dir == "BOTTOM" then
 			frame:SetPoint(grow_dir, lastframe, "TOP", 0, space)
-		else
+		elseif grow_dir == "TOP" then
 			frame:SetPoint(grow_dir, lastframe, "BOTTOM", 0, -space)
+		elseif grow_dir == "LEFT" then
+			frame:SetPoint(grow_dir, lastframe, "RIGHT", space, 0)
+		elseif grow_dir == "RIGHT" then
+			frame:SetPoint(grow_dir, lastframe, "LEFT", -space, 0)	
 		end
 		lastframe = frame
 	end
@@ -165,9 +179,7 @@ T.CreateAlertIcon = function(spellID, r, g, b, v)
 	frame.bottomtext:SetText(frame.spell_name)
 	
 	frame.text = T.createtext(frame, "OVERLAY", 40, "OUTLINE", "LEFT")
-	frame.text:SetPoint("LEFT", frame, "RIGHT", 10, 0)
 	frame.text:SetTextColor(r, g, b)
-	frame.text:SetWidth(500)
 	
 	return frame
 end
@@ -227,9 +239,6 @@ T.CreateTestIcon = function(spellID, v, dur, count, hl, r, g, b, tip)
 				frame.text:SetText(T.FormatTime(frame.remain) or ""..tip)
 			end
 			
-			if frame.hl then
-				frame.glow:SetAlpha(1-math.abs(glow_value))
-			end
 			if frame.remain <= 0 then
 				frame.reset()
 			end
@@ -377,9 +386,6 @@ T.CreateAura = function(option_page, aura_type, unit, spellID, v, r, g, b, show_
 				local time = show_time and (frame.remain == "inf" and "…" or (T.FormatTime(frame.remain).." ")) or ""
 				frame.text:SetText(count..time..tip or "")
 				
-				if frame.hl then
-					frame.glow:SetAlpha(1-math.abs(glow_value))
-				end
 				if frame.remain <= 0 then
 					frame.reset()
 				end
@@ -573,10 +579,6 @@ T.CreateAuras = function(option_page, aura_type, spellID, v, r, g, b, show_time,
 			
 			frame.text:SetText(frame.str)
 			
-			if frame.hl then
-				frame.glow:SetAlpha(1-math.abs(glow_value))
-			end
-			
 		else
 			frame.reset()
 		end
@@ -706,9 +708,6 @@ T.CreateLog = function(option_page, event_type, spellID, targetID, dur, v, r, g,
 			local time = (T.FormatTime(frame.remain).." ") or ""
 			frame.text:SetText(time..tip or "")
 			
-			if frame.hl then
-				frame.glow:SetAlpha(1-math.abs(glow_value))
-			end
 			if frame.remain <= 0 then
 				frame.reset()
 			end
@@ -888,11 +887,7 @@ T.CreateCasting = function(option_page, event, spellID, dur, v, r, g, b, tip, di
 			local time = (T.FormatTime(frame.remain).." ") or ""
 			
 			frame.text:SetText(time..tip or "")
-			
-			if frame.hl then
-				frame.glow:SetAlpha(1-math.abs(glow_value))
-			end
-			
+
 			if frame.remain <= 0 then
 				frame.reset()
 			end
@@ -1014,9 +1009,6 @@ T.CreateBossMsg = function(option_page, event, spellID, msg, dur, v, r, g, b, ti
 			frame.remain = frame.exp - time()
 			local time = (T.FormatTime(frame.remain).." ") or ""			
 			frame.text:SetText(time..tip or "")			
-			if frame.hl then
-				frame.glow:SetAlpha(1-math.abs(glow_value))
-			end
 			
 			if frame.remain <= 0 then
 				frame.reset()
@@ -1075,7 +1067,7 @@ end
 
 local TextFrame = CreateFrame("Frame", G.addon_name.."Text_Alert", G.FrameHolder)
 TextFrame:SetSize(300,50)
-TextFrame.t = 0
+TextFrame.glow_value_old = 0
 
 TextFrame.movingname = L["醒目文字提示"]
 TextFrame.point = { a1 = "CENTER", parent = "UIParent", a2 = "CENTER", x = 0, y = 250 }
@@ -1089,10 +1081,9 @@ T.EditTextFrame = function(option)
 	if option == "all" or option == "flash" then
 		if ARM_CDB["TextFrame"]["flash"] then 
 			TextFrame:SetScript("OnUpdate", function(self, e)
-				self.t = self.t + e
-				if self.t > update_rate then	
+				if self.glow_value_old ~= glow_value then	
 					self:SetAlpha(1-math.abs(glow_value))
-					self.t = 0
+					self.glow_value_old = glow_value
 				end
 			end)
 		else
@@ -1302,7 +1293,7 @@ end
 
 local HealthPercFrame = CreateFrame("Frame", addon_name.."HealthPercFrame", FrameHolder)
 HealthPercFrame:SetSize(300,50)
-HealthPercFrame.t = 0
+HealthPercFrame.glow_value_old = 0
  
 HealthPercFrame.movingname = L["血量提示"]
 HealthPercFrame.point = { a1 = "CENTER", parent = "UIParent", a2 = "CENTER", x = 0, y = 350 }
@@ -1342,10 +1333,9 @@ T.EditHealthPercFrame = function(option)
 	if option == "all" or option == "flash" then
 		if ARM_CDB["HealthPercFrame"]["flash"] then 
 			HealthPercFrame:SetScript("OnUpdate", function(self, e)
-				self.t = self.t + e
-				if self.t > update_rate then	
+				if self.glow_value_old ~= glow_value then	
 					self:SetAlpha(1-math.abs(glow_value))
-					self.t = 0
+					self.glow_value_old = glow_value
 				end
 			end)
 		else
@@ -1484,7 +1474,7 @@ end
 
 local PowerFrame = CreateFrame("Frame", addon_name.."PowerFrame", FrameHolder)
 PowerFrame:SetSize(300,50)
-PowerFrame.t = 0
+PowerFrame.glow_value_old = 0
  
 PowerFrame.movingname = L["能量提示"]
 PowerFrame.point = { a1 = "CENTER", parent = "UIParent", a2 = "CENTER", x = 0, y = 300 }
@@ -1524,10 +1514,9 @@ T.EditPowerFrame = function(option)
 	if option == "all" or option == "flash" then
 		if ARM_CDB["PowerFrame"]["flash"] then 
 			PowerFrame:SetScript("OnUpdate", function(self, e)
-				self.t = self.t + e
-				if self.t > update_rate then	
+				if self.glow_value_old ~= glow_value then	
 					self:SetAlpha(1-math.abs(glow_value))
-					self.t = 0
+					self.glow_value_old = glow_value
 				end
 			end)
 		else

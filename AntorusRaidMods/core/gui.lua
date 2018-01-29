@@ -587,6 +587,8 @@ options.AlertFrame_enable.apply = function() T.EditAlertFrame("enable") end
 local growdirection_group = {
 	["BOTTOM"] = L["上"],
 	["TOP"] = L["下"],
+	["LEFT"] = L["右"],
+	["RIGHT"] = L["左"],
 }
 options.AlertFrame_grow_dir = createradiobuttongroup(options, 150, -166, L["排列方向"], "AlertFrame", false, "grow_dir", growdirection_group)
 options.AlertFrame_grow_dir.apply = function() T.EditAlertFrame("grow_dir") end
